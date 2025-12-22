@@ -5,6 +5,7 @@
 #include <array>
 #include <ranges>
 #include <memory>
+#include <optional>
 #include "FileManager.h"
 #include "Animation.h"
 
@@ -13,7 +14,7 @@
 /// </summary>
 class Map
 {
-	sf::Sprite backgroundSprite;
+	std::optional<sf::Sprite> backgroundSprite;
 	
 	std::unique_ptr<Animation> crumbleCounter;
 	bool areTilesCrumbling = false;
@@ -26,17 +27,17 @@ class Map
 	void createBackground();
 
 public:
-	const static int MAP_WIDTH = 54; //in blocks
-	const static int MAP_HEIGHT = 30;//in blocks
-	const static int MAP_WIDTH_PIXELS = 1620; //in blocks
-	const static int MAP_HEIGHT_PIXELS = 900;//in blocks
+	constexpr static int MAP_WIDTH = 54; //in blocks
+	constexpr static int MAP_HEIGHT = 30;//in blocks
+	constexpr static int MAP_WIDTH_PIXELS = 1620; //in blocks
+	constexpr static int MAP_HEIGHT_PIXELS = 900;//in blocks
 
-	const static int TILE_SIZE = 30; //in px
+	constexpr static int TILE_SIZE = 30; //in px
 
-	const static int WALL_TILE = 1;
-	const static int TAIL_TILE = 2;
-	const static int EMPTY_TILE = 0;
-	const static int OCCUPIED_TILE = -1;
+	constexpr static int WALL_TILE = 1;
+	constexpr static int TAIL_TILE = 2;
+	constexpr static int EMPTY_TILE = 0;
+	constexpr static int OCCUPIED_TILE = -1;
 
 	const std::array<int, 4> CRUMBLING_TILE = {3,4,5,6};
 

@@ -38,12 +38,6 @@ protected:
 	/// <returns>Returns a random number</returns>
 	int getRandomStartingPos(int rangeFrom, int rangeTo);
 
-public:
-	/// <summary>
-	/// Calculates an index of the tile bellow center of this entity
-	/// </summary>
-	/// <returns>Returns an index</returns>
-	int getIndexOfTile();
 };
 
 #endif // !ENEMY_DEFAULT

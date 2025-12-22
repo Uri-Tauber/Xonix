@@ -62,11 +62,7 @@ public:
 	/// <returns>Coordinates</returns>
 	std::pair<int, int> getRside();
 
-	/// <summary>
-	/// Check if entity has touched given entity 
-	/// </summary>
-	/// <param name="e">reference to second entity</param>
-	bool chcekEntityCollions(Entity& e);
+	bool checkEntityCollisions(Entity& e);
 
 	/// <summary>
 	/// Checks if entity touched any Tail tile
@@ -74,5 +70,10 @@ public:
 	/// <param name="map">Reference to active map</param>
 	std::pair<bool, int> checkTailCollisons(Map& map);
 
+	/// <summary>
+	/// Calculates an index of the tile bellow center of this entity
+	/// </summary>
+	/// <returns>Returns an index</returns>
+	int getIndexOfTile();
 };
 #endif // !ENTITY

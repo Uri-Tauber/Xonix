@@ -9,21 +9,19 @@ Menu::Menu()
 
 	FileManager::swapBackgroundImage(1);
 
-	backgroundSprite.setTexture(FileManager::get_tx(FileManager::BACKGROUND_TX));
+	backgroundSprite.emplace(FileManager::get_tx(FileManager::BACKGROUND_TX));
 }
 
 void Menu::setUpText() 
 {
-	menuText.setFont(FileManager::get_ttl(FileManager::FONT_TTL));
-	menuText.setString("-  -  -  XONIX  -  -  -");
-	menuText.setCharacterSize(150);
-	menuText.setFillColor(sf::Color(127, 224, 227));
-	menuText.setStyle(sf::Text::Bold);
+	menuText.emplace(FileManager::get_ttl(FileManager::FONT_TTL), "-  -  -  XONIX  -  -  -", 150);
+	menuText->setFillColor(sf::Color(127, 224, 227));
+	menuText->setStyle(sf::Text::Bold);
 
 	//center text
-	sf::FloatRect textRect = menuText.getLocalBounds();
-	menuText.setOrigin(textRect.width / 2, textRect.height / 2);
-	menuText.setPosition(sf::Vector2f(width / 2, 100));
+	sf::FloatRect textRect = menuText->getLocalBounds();
+	menuText->setOrigin({textRect.size.x / 2, textRect.size.y / 2});
+	menuText->setPosition(sf::Vector2f(width / 2, 100));
 
 	creditsText = menuText;
 }
@@ -42,11 +40,11 @@ void Menu::initializeButtons()
 
 void Menu::displayMenu(sf::RenderWindow& win)
 {
-	win.draw(backgroundSprite);
+	if (backgroundSprite) win.draw(*backgroundSprite);
 
 	if (status == 1)
 	{
-		win.draw(menuText);
+		if (menuText) win.draw(*menuText);
 
 		for (size_t i{ 0 }; i < buttons.size() - 1; i++)
 			buttons[i]->displayButton(win);
@@ -103,23 +101,24 @@ std::array<bool, 3> Menu::menuLogic(sf::RenderWindow& win)
 
 void Menu::displayCredits(sf::RenderWindow& win)
 {
-	creditsText.setCharacterSize(80);
-	creditsText.setString(credits[0]);
-	creditsText.setPosition(sf::Vector2f(width / 2, 200));
-	win.draw(creditsText);
+	if (!creditsText) return;
+	creditsText->setCharacterSize(80);
+	creditsText->setString(credits[0]);
+	creditsText->setPosition(sf::Vector2f(width / 2, 200));
+	win.draw(*creditsText);
 
-	creditsText.setString(credits[1]);
-	creditsText.setPosition(sf::Vector2f(width / 2, 300));
-	win.draw(creditsText);
+	creditsText->setString(credits[1]);
+	creditsText->setPosition(sf::Vector2f(width / 2, 300));
+	win.draw(*creditsText);
 
-	creditsText.setCharacterSize(40);
-	creditsText.setString(credits[2]);
-	creditsText.setPosition(sf::Vector2f(width / 2, 390));
-	win.draw(creditsText);
+	creditsText->setCharacterSize(40);
+	creditsText->setString(credits[2]);
+	creditsText->setPosition(sf::Vector2f(width / 2, 390));
+	win.draw(*creditsText);
 
-	creditsText.setString(credits[3]);
-	creditsText.setPosition(sf::Vector2f(width / 2, 600));
-	win.draw(creditsText);
+	creditsText->setString(credits[3]);
+	creditsText->setPosition(sf::Vector2f(width / 2, 600));
+	win.draw(*creditsText);
 
 	buttons[4]->displayButton(win);
 }

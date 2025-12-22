@@ -1,20 +1,21 @@
 #include "Map.h"
+#include <algorithm>
+#include <iostream>
 
 void Map::createBackground()
 {
 	FileManager::swapBackgroundImage(0);
 
-	backgroundSprite.setTexture(FileManager::get_tx(FileManager::BACKGROUND_TX));
-	backgroundSprite.setPosition(sf::Vector2f(0.f, 0.f));
+	backgroundSprite.emplace(FileManager::get_tx(FileManager::BACKGROUND_TX));
+	backgroundSprite->setPosition(sf::Vector2f(0.f, 0.f));
 }
-
 void Map::draw(sf::RenderWindow& win) const
 {
-	win.draw(backgroundSprite);
+	if (backgroundSprite) win.draw(*backgroundSprite);
 
-	sf::Sprite sprite;
-	sprite.setTexture(FileManager::get_tx(FileManager::WALL_TX)); 
-	sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));
+	sf::Texture& wallTex = FileManager::get_tx(FileManager::WALL_TX);
+	sf::Sprite sprite(wallTex);
+	sprite.setTextureRect(sf::IntRect({0, 0}, {30, 30}));
 
 	int lastDrawnType = Map::WALL_TILE;
 
@@ -31,14 +32,14 @@ void Map::draw(sf::RenderWindow& win) const
 			{
 			case Map::WALL_TILE:
 				if (lastDrawnType != Map::WALL_TILE)
-					sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));
+					sprite.setTextureRect(sf::IntRect({0, 0}, {30, 30}));
 
 				win.draw(sprite);
 				lastDrawnType = Map::WALL_TILE;
 				break;
 			case Map::TAIL_TILE:
 				if (lastDrawnType != Map::TAIL_TILE)
-					sprite.setTextureRect(sf::IntRect(30, 0, 30, 30));
+					sprite.setTextureRect(sf::IntRect({30, 0}, {30, 30}));
 				
 				win.draw(sprite);
 				lastDrawnType = Map::TAIL_TILE;
@@ -47,7 +48,7 @@ void Map::draw(sf::RenderWindow& win) const
 			case 4:
 			case 5:
 			case 6:
-					sprite.setTextureRect(sf::IntRect(30* mapping[w + q * MAP_WIDTH]-1, 0, 30, 30));
+					sprite.setTextureRect(sf::IntRect({30* mapping[w + q * MAP_WIDTH]-1, 0}, {30, 30}));
 				win.draw(sprite);
 				lastDrawnType = 3;
 				break;
@@ -164,4 +165,3 @@ void Map::updateCrumbling()
 		}
 	}
 }
-

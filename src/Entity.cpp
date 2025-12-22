@@ -4,10 +4,10 @@
 void Entity::loadTextures(int type)
 {
 	body.setTexture(FileManager::get_tx(type));
-	body.setTextureRect(sf::IntRect(0, 0, ENTITY_RADIUS * 2, ENTITY_RADIUS * 2));
+	body.setTextureRect(sf::IntRect({0, 0}, {ENTITY_RADIUS * 2, ENTITY_RADIUS * 2}));
 }
 
-Entity::Entity(int s) : speed(s)
+Entity::Entity(int s) : speed(s), body(FileManager::get_tx(FileManager::PLAYER_TX)) // Placeholder
 {
 	animation = std::make_unique<Animation>();
 }
@@ -45,7 +45,7 @@ std::pair<int, int> Entity::getRside()
 	return { x,y };
 };
 
-bool Entity::chcekEntityCollions(Entity& e)
+bool Entity::checkEntityCollisions(Entity& e)
 {
 	if ((this->getLside().first < e.getLside().first && this->getRside().first > e.getLside().first)
 		|| (this->getLside().first < e.getRside().first && this->getRside().first > e.getRside().first)) //check X axis
@@ -54,7 +54,14 @@ bool Entity::chcekEntityCollions(Entity& e)
 				return true;
 
 	return false;
-};
+}
+
+int Entity::getIndexOfTile()
+{
+	int X = ((int)body.getPosition().x - (int)body.getPosition().x % Map::TILE_SIZE) / Map::TILE_SIZE;
+	int Y = ((int)body.getPosition().y - (int)body.getPosition().y % Map::TILE_SIZE) / Map::TILE_SIZE;
+	return (X + Y * Map::MAP_WIDTH);
+}
 
 std::pair<bool, int> Entity::checkTailCollisons(Map& map)
 {

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <optional>
 #include <SFML/Graphics.hpp>
 #include "Button.h"
 #include "FileManager.h"
@@ -13,8 +14,8 @@
 /// </summary>
 class TextBox
 {
-	sf::Text text;
-	sf::Text subtext;
+	std::optional<sf::Text> text;
+	std::optional<sf::Text> subtext;
 	
 	std::vector<std::unique_ptr<Button>> buttons;
 

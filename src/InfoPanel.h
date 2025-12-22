@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <optional>
 #include <SFML/Graphics.hpp>
 #include "FileManager.h"
 
@@ -19,9 +20,9 @@ class InfoPanel
 	std::string s_hp;
 	std::string s_completion;
 
-	sf::Text tLev;
-	sf::Text tHp;
-	sf::Text tComp;
+	std::optional<sf::Text> tLev;
+	std::optional<sf::Text> tHp;
+	std::optional<sf::Text> tComp;
 
 	int x;
 	int y;

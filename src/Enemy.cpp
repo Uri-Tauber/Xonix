@@ -57,13 +57,6 @@ int Enemy::checkWallCollisons(Map& map) //0 for no coll, 1 for vert coll, 2 for 
 	return collisionDir;
 }
 
-int Enemy::getIndexOfTile()
-{
-	int X = ((int)body.getPosition().x - (int)body.getPosition().x % Map::TILE_SIZE) / Map::TILE_SIZE;
-	int Y = ((int)body.getPosition().y - (int)body.getPosition().y % Map::TILE_SIZE) / Map::TILE_SIZE;
-	return (X + Y * Map::MAP_WIDTH);
-}
-
 int Enemy::getRandomStartingPos(int rangeFrom, int rangeTo)
 {
 	std::random_device rand_dev;

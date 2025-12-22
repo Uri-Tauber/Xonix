@@ -4,7 +4,7 @@ Player::Player(int s) : Entity(s)
 {
 	loadTextures(FileManager::PLAYER_TX);
 	velocity = std::make_pair(0, 0);
-	body.setOrigin(15, 15);
+	body.setOrigin({15, 15});
 	body.setPosition(sf::Vector2f(0, 0));
 }
 
@@ -27,7 +27,7 @@ void Player::revivePlayer()
 {
 	velocity = std::make_pair(0, 0);
 	body.setPosition(sf::Vector2f(0, 0));
-	body.setRotation(0);
+	body.setRotation(sf::degrees(0));
 	playerEntered = false;
 }
 
@@ -66,10 +66,10 @@ void Player::planNextTurn(int x, int y, float degree)
 
 void Player::checkCollisons(sf::Vector2f pos)
 {
-	if (pos.x < 15) body.setPosition(15, pos.y);
-	else if (pos.x > 1620 - 15) body.setPosition(1620 - 15, pos.y);
-	else if (pos.y < 15) body.setPosition(pos.x, 15);
-	else if (pos.y > 900 - 15) body.setPosition(pos.x, 900 - 15);
+	if (pos.x < 15) body.setPosition({15, pos.y});
+	else if (pos.x > 1620 - 15) body.setPosition({1620 - 15, pos.y});
+	else if (pos.y < 15) body.setPosition({pos.x, 15});
+	else if (pos.y > 900 - 15) body.setPosition({pos.x, 900 - 15});
 }
 
 bool Player::checkCrumbleCollison(Map& map)
@@ -98,8 +98,8 @@ void Player::changeVelocity(float x, float y)
 
 void Player::rotate(float angle)
 {
-	body.setRotation(0);
-	body.setRotation(angle);
+	body.setRotation(sf::degrees(0));
+	body.setRotation(sf::degrees(angle));
 }
 
 bool Player::getConquestState() { return conquestPossible; }

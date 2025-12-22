@@ -66,7 +66,8 @@ public:
 	/// Method then set up basic game components 
 	/// </summary>
 	/// <param name="doLoadGame">If true, app will try to load game form the file</param>
-	void initializeGame(bool doLoadGame);
+	/// <returns>True if initialization succeeded</returns>
+	bool initializeGame(bool doLoadGame);
 
 	/// <summary>
 	/// Sets up new enemies, resets mapa and player position
@@ -111,6 +112,11 @@ public:
 	/// Calculates all events related to game logic specifically
 	/// </summary>
 	void handleGameConditions();
+
+	/// <summary>
+	/// Handles operations related to level completion and initialization of next level
+	/// </summary>
+	void nextLevelProc();
 
 	/// <summary>
 	/// Method inveked every time player looses a hp. Resets its position to starting point

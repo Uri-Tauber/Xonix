@@ -7,7 +7,7 @@ Animation::Animation() {
 void Animation::applyToSprite(sf::Sprite& s)
 {
 	int entitySize = 30;
-	s.setTextureRect(sf::IntRect(entitySize * currentFrame, 0, entitySize, entitySize));
+	s.setTextureRect(sf::IntRect({entitySize * currentFrame, 0}, {entitySize, entitySize}));
 }
 
 bool Animation::update() {

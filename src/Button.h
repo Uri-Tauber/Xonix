@@ -2,6 +2,7 @@
 #define BUT
 
 #include <memory>
+#include <optional>
 #include <SFML/Graphics.hpp>
 #include "FileManager.h"
 
@@ -20,8 +21,8 @@ class Button
 	bool active = true;
 	sf::Color color = sf::Color::White;
 
-	sf::Sprite bodyButton;
-	sf::Text buttonText;
+	std::optional<sf::Sprite> bodyButton;
+	std::optional<sf::Text> buttonText;
 
 public:
 

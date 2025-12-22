@@ -12,27 +12,33 @@ int FileManager::chosedBackground = 1;
 
 void FileManager::setUpResources()
 {
-player_tx = std::make_unique<sf::Texture>();
-player_tx->loadFromImage(openImage("resources/player.png"));
+	static bool initialized = false;
+	if (initialized) return;
+	initialized = true;
 
-blue_enemy_tx = std::make_unique<sf::Texture>();
-blue_enemy_tx->loadFromImage(openImage("resources/enemy.png"));
+	std::filesystem::path resourcesDir = "resources";
 
-green_enemy_tx = std::make_unique<sf::Texture>();
-green_enemy_tx->loadFromImage(openImage("resources/enemyHunt.png"));
+	player_tx = std::make_unique<sf::Texture>();
+	player_tx->loadFromImage(openImage(resourcesDir / "player.png"));
 
-background_tx = std::make_unique<sf::Texture>();
-background_tx->loadFromImage(openImage("resources/menuImg.png"));
-chosedBackground = 1;
+	blue_enemy_tx = std::make_unique<sf::Texture>();
+	blue_enemy_tx->loadFromImage(openImage(resourcesDir / "enemy.png"));
 
-wall_tx = std::make_unique<sf::Texture>();
-wall_tx->loadFromImage(openImage("resources/Wall.png"));
+	green_enemy_tx = std::make_unique<sf::Texture>();
+	green_enemy_tx->loadFromImage(openImage(resourcesDir / "enemyHunt.png"));
 
-button_tx = std::make_unique<sf::Texture>();
-button_tx->loadFromImage(openImage("resources/button.png"));
+	background_tx = std::make_unique<sf::Texture>();
+	background_tx->loadFromImage(openImage(resourcesDir / "menuImg.png"));
+	chosedBackground = 1;
 
-font_ttl = std::make_unique<sf::Font>();
-openTTFfile(*font_ttl.get(), "resources/DIGIB.TTF");
+	wall_tx = std::make_unique<sf::Texture>();
+	wall_tx->loadFromImage(openImage(resourcesDir / "Wall.png"));
+
+	button_tx = std::make_unique<sf::Texture>();
+	button_tx->loadFromImage(openImage(resourcesDir / "button.png"));
+
+	font_ttl = std::make_unique<sf::Font>();
+	font_ttl->openFromFile(resourcesDir / "DIGIB.TTF");
 }
 
 void FileManager::resetResources()
@@ -48,14 +54,15 @@ void FileManager::resetResources()
 
 void FileManager::swapBackgroundImage(int swap)
 {
+	std::filesystem::path resourcesDir = "resources";
 	if (chosedBackground == 1 && swap == 0)
 	{
-		background_tx->loadFromFile("resources/BgPic.png");
+		background_tx->loadFromFile(resourcesDir / "BgPic.png");
 		chosedBackground = 0;
 	}
 	else if(chosedBackground == 0 && swap == 1)
 	{
-		background_tx->loadFromFile("resources/menuImg.png");
+		background_tx->loadFromFile(resourcesDir / "menuImg.png");
 		chosedBackground = 1;
 	}
 }
@@ -65,22 +72,28 @@ sf::Texture& FileManager::get_tx(int type)
 	switch (type)
 	{
 	case PLAYER_TX:
-		return *player_tx.get();
+		if (player_tx) return *player_tx.get();
+		break;
 	case BLUE_ENEMY_TX:
-		return *blue_enemy_tx.get();
+		if (blue_enemy_tx) return *blue_enemy_tx.get();
+		break;
 	case GREEN_ENEMY_TX:
-		return *green_enemy_tx.get();
+		if (green_enemy_tx) return *green_enemy_tx.get();
+		break;
 	case BUTTON_TX:
-		return *button_tx.get();
+		if (button_tx) return *button_tx.get();
+		break;
 	case BACKGROUND_TX:
-		return *background_tx.get();
+		if (background_tx) return *background_tx.get();
+		break;
 	case WALL_TX:
-		return *wall_tx.get();
+		if (wall_tx) return *wall_tx.get();
+		break;
 	default:
 		break;
 	}
 
-	sf::Texture t;
+	static sf::Texture t;
 	return t;
 }
 
@@ -89,12 +102,15 @@ sf::Font& FileManager::get_ttl(int type)
 	switch (type)
 	{
 	case FONT_TTL:
-		return *font_ttl.get();
+		if (font_ttl) {
+			return *font_ttl.get();
+		}
+		break;
 	default:
 		break;
 	}
 
-	sf::Font f;
+	static sf::Font f;
 	return f;
 }
 
@@ -106,7 +122,7 @@ sf::Image FileManager::openImage(std::filesystem::path path)
 		if (!checkDir(path))
 			throw(std::string("Unable to find image under path: " + path.string() + " \n"));
 
-		i.loadFromFile(path.string());
+		i.loadFromFile(path);
 	
 		return i;
 	}
@@ -124,7 +140,7 @@ void FileManager::openTTFfile(sf::Font& f, std::filesystem::path path)
 		if (!checkDir(path))
 			throw(std::string("Unable to find TTF file under path: " + path.string() + " \n"));
 
-		f.loadFromFile(path.string());
+		f.openFromFile(path);
 	}
 	catch (std::string& e)
 	{
@@ -134,15 +150,18 @@ void FileManager::openTTFfile(sf::Font& f, std::filesystem::path path)
 
 void FileManager::readFromFile(std::string& contener, std::filesystem::path path)
 {
-	std::ifstream stream(path.string());
+	std::ifstream stream(path);
 	try
 	{
 		if (!stream.is_open())
 			throw(std::string("Unable to read file from path: " + path.string() + "\n"));
 
 		std::string tmp;
-		while (std::getline(stream, tmp))
+		while (std::getline(stream, tmp)) {
+			if (!tmp.empty() && tmp.back() == '\r')
+				tmp.pop_back();
 			contener += tmp;
+		}
 
 		stream.close();
 	}
@@ -154,7 +173,7 @@ void FileManager::readFromFile(std::string& contener, std::filesystem::path path
 
 void FileManager::readFromFile(std::vector<std::string>& contener, std::filesystem::path path)
 {
-	std::ifstream stream(path.string());
+	std::ifstream stream(path);
 	try
 	{
 		if (!stream.is_open())
@@ -162,8 +181,11 @@ void FileManager::readFromFile(std::vector<std::string>& contener, std::filesyst
 
 
 		std::string tmp;
-		while (std::getline(stream, tmp))
+		while (std::getline(stream, tmp)) {
+			if (!tmp.empty() && tmp.back() == '\r')
+				tmp.pop_back();
 			contener.push_back(tmp);
+		}
 
 		stream.close();
 	}
@@ -188,6 +210,7 @@ void FileManager::readMapFile(std::array<int, 1620>& a, std::filesystem::path pa
 
 	for (int q{ 0 }; q < tmp.size(); q++)
 	{
+		if (aIndex >= 1620) break;
 		switch (tmp[q])
 		{
 		case '1':
@@ -214,6 +237,7 @@ void FileManager::readLevelsFile(std::vector<std::string>& l, std::filesystem::p
 	{
 		if (!validateLevels(l))
 		{
+			l.clear(); // Clear invalid data
 			std::string s{ "Can not read game settings properly, reinstall game \n" };
 			throw(s);
 		}
@@ -227,14 +251,17 @@ void FileManager::readLevelsFile(std::vector<std::string>& l, std::filesystem::p
 bool FileManager::validateLevels(std::vector<std::string>& l)
 {
 	std::regex r1("[0-9][0-9];");
-	std::regex r2("[0-9]{1,2};[(0-9]{2};[0-5];[0-5];[0-5];[0-5];[0-5];");
+	std::regex r2("[0-9]{1,2};[0-9]{2};[0-5];[0-5];[0-5];[0-5];[0-5];");
 	std::smatch mS;
+	
+	if (l.empty()) return false;
 
 	if (std::regex_match(l[0], r1))
 	{
-		for (int q{ 0 }; q < std::stoi(l[0]); q++)
-			if (!std::regex_match(l[q + 1], r2))
-				return false;
+		for (int q = 0; q < std::stoi(l[0]); q++) {
+			if (q + 1 >= l.size()) return false;
+			if (!std::regex_match(l[q + 1], r2)) return false;
+		}
 
 		return true;
 	}
@@ -243,9 +270,10 @@ bool FileManager::validateLevels(std::vector<std::string>& l)
 
 bool FileManager::createFile(std::filesystem::path path, std::string name, std::string content)
 {
-	if (!std::filesystem::exists(path.string() + "/" + name))
+	std::filesystem::path fullPath = path / name;
+	if (!std::filesystem::exists(fullPath))
 	{
-		std::ofstream stream(path.string() + "/" + name);
+		std::ofstream stream(fullPath);
 
 		stream << content;
 
@@ -257,9 +285,10 @@ bool FileManager::createFile(std::filesystem::path path, std::string name, std::
 
 bool FileManager::createFile(std::filesystem::path path, std::string name, std::vector<std::string> contents)
 {
-	if (!std::filesystem::exists(path.string() + "/" + name))
+	std::filesystem::path fullPath = path / name;
+	if (!std::filesystem::exists(fullPath))
 	{
-		std::ofstream stream(path.string() + "/" + name);
+		std::ofstream stream(fullPath);
 
 		for (auto c : contents)
 			stream << c << '\n';
@@ -293,9 +322,9 @@ bool FileManager::validateSaves(std::vector<std::string> sav)
 
 bool FileManager::editFile(std::filesystem::path path, std::vector<std::string> contents)
 {
-	if (std::filesystem::exists(path.string()))
+	if (std::filesystem::exists(path))
 	{
-		std::ofstream stream(path.string());
+		std::ofstream stream(path);
 
 		for (auto c : contents)
 			stream << c << '\n';
@@ -308,9 +337,9 @@ bool FileManager::editFile(std::filesystem::path path, std::vector<std::string> 
 
 bool FileManager::editFile(std::filesystem::path path, std::string content)
 {
-	if (std::filesystem::exists(path.string()))
+	if (std::filesystem::exists(path))
 	{
-		std::ofstream stream(path.string());
+		std::ofstream stream(path);
 
 		stream << content;
 
@@ -323,16 +352,15 @@ bool FileManager::editFile(std::filesystem::path path, std::string content)
 
 bool FileManager::checkDir(std::filesystem::path path)
 {
-	if (std::filesystem::exists(path.string()))
-		return true;
-	return false;
+	return std::filesystem::exists(path);
 }
 
 bool FileManager::createDir(std::filesystem::path path, std::string name)
 {
-	if (!checkDir(path.string() + "/" + name))
+	std::filesystem::path fullPath = path / name;
+	if (!checkDir(fullPath))
 	{
-		std::filesystem::create_directory(path.string() + "/" + name);
+		std::filesystem::create_directory(fullPath);
 		return true;
 	}
 	return false;

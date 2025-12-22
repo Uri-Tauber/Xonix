@@ -3,6 +3,7 @@
 
 #include <array>
 #include <memory>
+#include <optional>
 #include <SFML/Graphics.hpp>
 #include "Button.h"
 #include "FileManager.h"
@@ -20,11 +21,11 @@ class Menu
 	std::array<bool, 3> menuChoices{ false,false,false }; //(active = 1, inactive = 0, exit game = false)
 	bool demandedCredits = false;
 
-	sf::Sprite backgroundSprite;
+	std::optional<sf::Sprite> backgroundSprite;
 	std::array<std::unique_ptr<Button>,5> buttons;
 
-	sf::Text menuText;
-	sf::Text creditsText;
+	std::optional<sf::Text> menuText;
+	std::optional<sf::Text> creditsText;
 
 	static constexpr std::chrono::milliseconds holdTime{ 200 };
 	std::chrono::time_point<std::chrono::steady_clock> timeStamp;

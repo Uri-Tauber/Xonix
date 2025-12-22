@@ -2,7 +2,7 @@
 
 void GWindow::config()
 {
-	window.create(sf::VideoMode(width, height), "Pac-xon!", sf::Style::Close);
+	window.create(sf::VideoMode({static_cast<unsigned int>(width), static_cast<unsigned int>(height)}), "Pac-xon!", sf::Style::Close);
 	window.setPosition(sf::Vector2i(0, 0));
 	window.setFramerateLimit(60);
 
@@ -12,8 +12,8 @@ void GWindow::config()
 void GWindow::setGameIcon()
 {
 	sf::Image icon;
-	icon = FileManager::openImage("resources/Logo.png");
-	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+	icon = FileManager::openImage(std::filesystem::path("resources") / "Logo.png");
+	window.setIcon(icon);
 }
 
 GWindow::GWindow()
@@ -40,9 +40,8 @@ std::array<bool, 3> GWindow::displayMenu()
 	std::array<bool, 3> choices{0,0,0};
 	while (window.isOpen() && menu->getStatus() != 0)
 	{
-		sf::Event event;
-		while (window.pollEvent(event))
-			if (event.type == sf::Event::Closed)
+		while (const auto event = window.pollEvent())
+			if (event->is<sf::Event::Closed>())
 				window.close();
 
 		choices = menu->menuLogic(window);
